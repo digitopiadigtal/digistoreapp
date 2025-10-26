@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pembayaran — DigiStore Extension</title>
+  <meta name="description" content="Checkout DigiStore Extension — QRIS pembayaran statis. Scan lalu kirim bukti via WhatsApp." />
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --navy:#0b2545;
+      --accent:#0b3b6f;
+      --muted:#6b7280;
+      --bg:#ffffff;
+      --card:#ffffff;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--navy);-webkit-font-smoothing:antialiased}
+    .container{max-width:820px;margin:28px auto;padding:20px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand .mark{width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;color:white;font-weight:800}
+    h1{margin:0;font-size:22px}
+    p.lead{color:var(--muted);margin-top:6px;margin-bottom:18px}
+    .card{border:1px solid #f1f5f9;border-radius:12px;padding:18px;background:linear-gradient(180deg,#fff,#fbfdff);box-shadow:0 8px 24px rgba(11,37,69,0.03)}
+    .product-row{display:flex;gap:16px;align-items:center}
+    .product-info{flex:1}
+    .price{font-weight:800;font-size:20px;margin-top:6px}
+    label{display:block;font-weight:600;margin-top:12px}
+    input[type="email"]{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eefb;margin-top:6px}
+    .actions{display:flex;gap:10px;margin-top:14px}
+    .btn{padding:12px 16px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
+    .btn-primary{background:var(--navy);color:white}
+    .btn-outline{background:transparent;border:2px solid var(--navy);color:var(--navy)}
+    .note{color:var(--muted);font-size:14px;margin-top:12px}
+    /* Popup modal */
+    .modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,7,18,0.5);z-index:50;padding:20px}
+    .modal{width:100%;max-width:520px;background:white;border-radius:12px;padding:18px;box-shadow:0 20px 40px rgba(2,6,23,0.4);transform:translateY(20px);opacity:0;transition:all .28s ease}
+    .modal.show{transform:translateY(0);opacity:1}
+    .qris-img{width:100%;max-width:360px;display:block;margin:12px auto;border-radius:8px;border:1px solid #eef6ff}
+    .modal .meta{color:var(--muted);font-size:14px;margin-top:8px}
+    .modal .modal-actions{display:flex;gap:10px;justify-content:center;margin-top:14px}
+    .small{font-size:13px;color:var(--muted)}
+    .success-box{display:none;padding:12px;border-radius:10px;background:#f0fdf4;border:1px solid #d1fae5;color:#065f46;margin-top:12px}
+    @media(max-width:640px){
+      .product-row{flex-direction:column;align-items:flex-start}
+      .modal{padding:14px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="mark">D</div>
+        <div>
+          <div style="font-weight:800">Digistore Premium App</div>
+          <div style="font-size:13px;color:var(--muted)">Pembayaran — DigiStore Extension</div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--muted)">Rp 69.000 / bulan</div>
+    </header>
+
+    <main>
+      <div class="card">
+        <div class="product-row">
+          <div class="product-info">
+            <h1>DigiStore Extension</h1>
+            <p class="lead">Akses puluhan kategori akun premium dengan satu langganan. Kompatibel di PC & HP.</p>
+            <div class="price">Rp 69.000 <span style="font-size:13px;color:var(--muted);font-weight:600">/ bulan</span></div>
+
+            <label for="email">Email (wajib)</label>
+            <input id="email" type="email" placeholder="contoh: nama@domain.com" />
+
+            <div class="note">Masukkan email supaya admin bisa mengirimkan detail akun & bukti pembelian.</div>
+
+            <div class="actions">
+              <button class="btn btn-primary" id="btnPay">Lanjutkan ke Pembayaran</button>
+              <button class="btn btn-outline" id="btnCancel">Batal</button>
+            </div>
+
+            <div class="success-box" id="successBox">Terima kasih! Bukti pembayaran akan dikirim via WhatsApp ke admin. Tunggu konfirmasi.</div>
+            <div style="margin-top:10px" class="small">Metode pembayaran: QRIS statis. Scan lalu bayar secara manual.</div>
+          </div>
+
+          <div style="width:220px;text-align:center">
+            <img src="https://via.placeholder.com/200x140?text=Icon+Extension" alt="extension" style="width:120px;margin-bottom:8px" />
+            <div style="font-weight:700">DigiStore Extension</div>
+            <div style="color:var(--muted);font-size:13px">Langganan bulanan</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer style="margin-top:18px;color:var(--muted);font-size:13px">
+      <div>Butuh bantuan? Hubungi Dea via WhatsApp: <a href="https://wa.me/6282258282328" target="_blank">0822-5828-2328</a></div>
+    </footer>
+  </div>
+
+  <!-- Modal / Popup -->
+  <div class="modal-backdrop" id="backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div id="modalTitle" style="font-weight:800">Scan & Bayar — QRIS</div>
+          <div class="meta">Scan QR berikut untuk menyelesaikan pembayaran Rp 69.000</div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);cursor:pointer" id="closeX">Tutup ✕</div>
+      </div>
+
+      <img src="https://apiwa.ia-asp.org/id/uploads/9/684f9f2c5cdc7.jpeg" alt="QRIS Digistore" class="qris-img" id="qrisImage" />
+
+      <div class="meta" style="text-align:center;margin-top:6px">
+        <div>1. Buka aplikasi pembayaran bank/QRIS di HP kamu</div>
+        <div>2. Arahkan kamera ke QR atau pilih scan pada aplikasi</div>
+        <div>3. Masukkan nominal Rp 69.000 dan konfirmasi</div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="btnSendWA">Kirim Bukti ke Admin</button>
+        <button class="btn btn-outline" id="btnClose">Tutup</button>
+      </div>
+      <div style="text-align:center;margin-top:8px;font-size:13px;color:var(--muted)">
+        Setelah kirim bukti, tunggu konfirmasi dari admin.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Elements
+    const btnPay = document.getElementById('btnPay');
+    const btnCancel = document.getElementById('btnCancel');
+    const emailInput = document.getElementById('email');
+    const backdrop = document.getElementById('backdrop');
+    const modal = backdrop.querySelector('.modal');
+    const btnClose = document.getElementById('btnClose');
+    const closeX = document.getElementById('closeX');
+    const btnSendWA = document.getElementById('btnSendWA');
+    const successBox = document.getElementById('successBox');
+
+    // Validate email simple
+    function isValidEmail(email){
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    // Show modal
+    function showModal(){
+      backdrop.style.display = 'flex';
+      setTimeout(()=> modal.classList.add('show'),20);
+    }
+
+    // Hide modal
+    function hideModal(){
+      modal.classList.remove('show');
+      setTimeout(()=> backdrop.style.display = 'none', 220);
+    }
+
+    btnPay.addEventListener('click', ()=>{
+      const email = emailInput.value.trim();
+      if(!isValidEmail(email)){
+        alert('Masukkan email yang valid terlebih dahulu.');
+        emailInput.focus();
+        return;
+      }
+      // Save email to localStorage (optional)
+      localStorage.setItem('digistore_email', email);
+      showModal();
+    });
+
+    btnCancel.addEventListener('click', ()=>{
+      // simple cancel action
+      emailInput.value = '';
+    });
+
+    btnClose.addEventListener('click', hideModal);
+    closeX.addEventListener('click', hideModal);
+
+    // When user clicks send WA
+    btnSendWA.addEventListener('click', ()=>{
+      const email = localStorage.getItem('digistore_email') || emailInput.value.trim() || '';
+      const phone = '6282258282328';
+      const message = `Halo Kak Dea! Saya sudah bayar untuk DigiStore Extension. Email saya: ${email}. Mohon verifikasi ya.`;
+      const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      // show success box
+      successBox.style.display = 'block';
+      // open WhatsApp in new tab
+      window.open(waLink, '_blank');
+      // optional: auto-close modal after a short delay
+      setTimeout(()=>{
+        hideModal();
+      },600);
+    });
+
+    // prefill email if present in localStorage
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const saved = localStorage.getItem('digistore_email');
+      if(saved) emailInput.value = saved;
+    });
+
+    // close modal when clicking outside modal content
+    backdrop.addEventListener('click', (e)=>{
+      if(e.target === backdrop) hideModal();
+    });
+  </script>
+</body>
+</html>
